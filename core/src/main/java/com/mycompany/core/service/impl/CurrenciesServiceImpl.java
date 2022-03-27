@@ -12,10 +12,7 @@ import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.Designate;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 @Component(service = CurrenciesService.class, immediate = true)
 @Designate(ocd = CurrenciesServiceImpl.Config.class)
@@ -66,13 +63,10 @@ public class CurrenciesServiceImpl implements CurrenciesService {
 
         Map<String, Currency> currencyList = new HashMap<>();
         Resource rootNode = request.getResourceResolver().getResource(rootPath);
+
         if (rootNode != null) {
-            for (Resource currencyNode : rootNode.getChildren()) {
-                Currency currency = currencyNode.adaptTo(Currency.class);
-                if (currency != null) {
-                    currencyList.put(currencyNode.getName(), currency);
-                }
-            }
+            rootNode.getChildren()
+                    .forEach(resource -> currencyList.put(resource.getName(), resource.adaptTo(Currency.class)));
         }
         return currencyList;
     }
