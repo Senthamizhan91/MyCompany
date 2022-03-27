@@ -22,11 +22,16 @@ import org.osgi.service.metatype.annotations.AttributeDefinition;
 @Designate(ocd = AudienceServiceImpl.Config.class)
 public class AudienceServiceImpl implements AudienceService {
 
+    public static final String NAME = "name";
+    public static final String VALUE = "value";
+
     @ObjectClassDefinition(name = "Audience Service", description = "Get Configurations")
-    public static @interface Config {
+    public @interface Config {
+
+        String DEFAULT_ROOTPATH = "etc/default";
 
         @AttributeDefinition(name = "Root Path")
-        String root_path() default "etc/default";
+        String root_path() default DEFAULT_ROOTPATH;
     }
 
     private String rootPath;
@@ -55,11 +60,9 @@ public class AudienceServiceImpl implements AudienceService {
             ValueMap valueMap = childResource.getValueMap();
             String name = StringUtils.EMPTY;
             String value = StringUtils.EMPTY;
-            if (valueMap.containsKey("name")) {
-                name = valueMap.get("name", String.class);
-            }
-            if (valueMap.containsKey("value")) {
-                value = valueMap.get("value", String.class);
+            if (valueMap.containsKey(NAME) && valueMap.containsKey(VALUE)) {
+                name = valueMap.get(NAME, String.class);
+                value = valueMap.get(VALUE, String.class);
             }
             audienceMap.put(name, value);
         }
